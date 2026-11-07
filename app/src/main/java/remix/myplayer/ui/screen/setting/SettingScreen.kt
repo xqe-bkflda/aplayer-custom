@@ -47,6 +47,7 @@ import remix.myplayer.ui.screen.setting.logic.lyric.DesktopLyricLogic
 import remix.myplayer.ui.screen.setting.logic.lyric.LyricPriorityLogic
 import remix.myplayer.ui.screen.setting.logic.lyric.StatusBarLyricLogic
 import remix.myplayer.ui.screen.setting.logic.lyric.TranslationLogic
+import remix.myplayer.ui.screen.setting.logic.download.DownloadPreferenceItems
 import remix.myplayer.ui.screen.setting.logic.notification.ClassicNotifyLogic
 import remix.myplayer.ui.screen.setting.logic.notification.NotifyBackgroundLogic
 import remix.myplayer.ui.screen.setting.logic.other.ClearCacheLogic
@@ -113,6 +114,7 @@ fun SettingDetailScreen(categoryKey: String) {
           SettingCategory.Cover -> CoverPreferenceItems()
           SettingCategory.Lyric -> LyricPreferenceItems()
           SettingCategory.Notification -> NotificationPreferenceItems()
+          SettingCategory.Download -> DownloadPreferenceItems()
           SettingCategory.Other -> OtherPreferenceItems()
         }
       }
@@ -177,6 +179,7 @@ private enum class SettingCategory(
     R.string.setting_notification_desc,
     "notification"
   ),
+  Download(R.drawable.ic_save_white_24dp, R.string.download, R.string.setting_download_desc, "download"),
   Other(R.drawable.ic_info_outlined_24dp, R.string.other, R.string.setting_other_desc, "other");
 
   companion object {
@@ -302,12 +305,6 @@ private fun OtherPreferenceItems() {
 
   ArrowPreference(R.string.about_info) {
     nav.navigate(RouteAbout)
-  }
-
-  if (BuildConfig.FLAVOR == "normal") {
-    Preference(onClick = {
-      mainViewModel.checkInAppUpdate(true)
-    }, title = stringResource(R.string.check_update))
   }
 
   ClearCacheLogic()

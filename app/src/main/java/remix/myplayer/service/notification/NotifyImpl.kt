@@ -64,14 +64,10 @@ class NotifyImpl(context: MusicService) : Notify(context) {
     }
 
     //桌面歌词
-    remoteBigView.setImageViewResource(
-      R.id.notify_lyric,
-      if (lyricManager.isDesktopLyricEnabled) R.drawable.icon_notify_desktop_lyric_unlock else R.drawable.icon_notify_lyric
-    )
-    remoteView.setImageViewResource(
-      R.id.notify_lyric,
-      if (lyricManager.isDesktopLyricEnabled) R.drawable.icon_notify_desktop_lyric_unlock else R.drawable.icon_notify_lyric
-    )
+    // 通知栏按钮恒定显示"桌面歌词开/关"；锁定时点它也会先解锁（见 TOGGLE 命令），
+    // 避免出现"显示/隐藏歌词"和"解锁"两套按钮让用户迷惑。
+    remoteBigView.setImageViewResource(R.id.notify_lyric, R.drawable.icon_notify_lyric)
+    remoteView.setImageViewResource(R.id.notify_lyric, R.drawable.icon_notify_lyric)
 
     //设置播放按钮
     if (!isPlay) {
@@ -168,10 +164,7 @@ class NotifyImpl(context: MusicService) : Notify(context) {
     remoteView.setOnClickPendingIntent(R.id.notify_close, closeIntent)
 
     //桌面歌词
-    val lyricIntent = buildPendingIntent(
-      context,
-      if (lyricManager.isDesktopLyricLocked) Command.UNLOCK_DESKTOP_LYRIC else Command.TOGGLE_DESKTOP_LYRIC
-    )
+    val lyricIntent = buildPendingIntent(context, Command.TOGGLE_DESKTOP_LYRIC)
     remoteBigView.setOnClickPendingIntent(R.id.notify_lyric, lyricIntent)
     remoteView.setOnClickPendingIntent(R.id.notify_lyric, lyricIntent)
   }

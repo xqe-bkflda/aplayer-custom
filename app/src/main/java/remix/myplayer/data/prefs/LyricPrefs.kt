@@ -19,10 +19,22 @@ class LyricPrefs @Inject constructor(
 
   // 默认的歌词搜索顺序
   val generalLyricOrderList: List<LyricOrder>
-    get() = try {
-      Json.decodeFromString<List<LyricOrder>>(generalLyricOrder)
-    } catch (ignore: Exception) {
-      defaultLyricOrderList
+    get() {
+      val list = try {
+        Json.decodeFromString<List<LyricOrder>>(generalLyricOrder)
+      } catch (ignore: Exception) {
+        // 旧配置里可能还留着已下线的来源（如 QQ），解析会失败，直接覆盖成新默认
+        return defaultLyricOrderList.also {
+          generalLyricOrder = Json.encodeToString(it)
+        }
+      }
+      // 一次性迁移：老默认是"内嵌"打头，用户还没手动调过 → 覆盖成新默认（本地打头）
+      if (list.firstOrNull() == LyricOrder.Embedded) {
+        return defaultLyricOrderList.also {
+          generalLyricOrder = Json.encodeToString(it)
+        }
+      }
+      return list
     }
 
   var generalLyricOrder by PrefsDelegate(
@@ -57,11 +69,10 @@ class LyricPrefs @Inject constructor(
   companion object {
 
     private val defaultLyricOrderList = listOf(
-      LyricOrder.Embedded,
       LyricOrder.Local,
-      LyricOrder.Kugou,
       LyricOrder.Netease,
-      LyricOrder.Qq,
+      LyricOrder.Kugou,
+      LyricOrder.Embedded,
       LyricOrder.Ignore
     )
 

@@ -46,6 +46,7 @@ class PlayListRepoImpl @Inject constructor(
           SortOrder.PLAYLIST_A_Z -> "name"
           SortOrder.PLAYLIST_Z_A -> "name desc"
           SortOrder.PLAYLIST_DATE -> "date"
+          SortOrder.PLAYLIST_DATE_DESC -> "date desc"
           else -> "name"
         }
 

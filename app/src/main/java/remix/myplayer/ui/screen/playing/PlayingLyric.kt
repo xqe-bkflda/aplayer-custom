@@ -148,14 +148,22 @@ internal fun PlayingLyric(song: Song) {
 
   // 更新歌词
   LaunchedEffect(song, searchTrigger) {
+    if (!song.valid()) return@LaunchedEffect
     searching = true
+    // 用 updateLyrics 返回的 job；它内部会先取消上一首还没跑完的，
+    // 所以这里 join 的是「当前这首先行」的任务，等它真正写完再读结果。
     val job = lyricsManager.updateLyrics(song, uriProvider)
     job?.join()
     searching = false
 
-    lyrics = lyricsManager.lyrics ?: emptyList()
-    lyricOffset = lyricsManager.offset
-    uriProvider = null
+    // 切歌瞬间 updateLyrics 可能刚被后一首抢掉导致 job 为 null，
+    // 这时不急着把界面清空，等下一次触发（切歌本身会再来一遍）。
+    val fresh = lyricsManager.lyrics
+    if (fresh != null) {
+      lyrics = fresh
+      lyricOffset = lyricsManager.offset
+      uriProvider = null
+    }
   }
 
   // 5s后offsetPanel隐藏

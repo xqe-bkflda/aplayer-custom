@@ -9,7 +9,6 @@ enum class LyricOrder {
   Local,
   Kugou,
   Netease,
-  Qq,
   Manual;
 
   val stringRes: Int
@@ -20,7 +19,6 @@ enum class LyricOrder {
       Local -> R.string.local
       Kugou -> R.string.kugou
       Netease -> R.string.netease
-      Qq -> R.string.qq
       Manual -> R.string.select_lrc
     }
 }

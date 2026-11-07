@@ -42,10 +42,15 @@ class FetchMetaDataUseCase @Inject constructor(
       }.also { jobs[key] = it }
     }
 
-    job.await()
+    // 等这个 URL 的解析完成，但不要让列表被慢网络拖住；
+    // 超时/异常都只是让封面退回占位图，不该崩。
+    runCatching {
+      kotlinx.coroutines.withTimeoutOrNull(8000) { job.await() }
+    }.onFailure { Timber.w(it, "await meta for ${song.data} failed") }
     // 尝试读一次缓存，处理可能多个Song实例共享同一个URL的情况
     if (song.metaFetchState.get() == 0) {
-      loadFromCache(song)
+      runCatching { loadFromCache(song) }
+        .onFailure { Timber.w(it, "loadFromCache failed") }
     }
   }
 
@@ -145,7 +150,9 @@ class FetchMetaDataUseCase @Inject constructor(
           track = track
         )
       )
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
+      // OutOfMemoryError / UnsatisfiedLinkError 这类也一并收住：
+      // 在线列表滚动会连续触发，任何一个穿透都是整个 App 崩。
       Timber.v("fetchMeta failed, data: ${song.data} detail: $e")
       song.metaFetchState.set(3)
     } finally {

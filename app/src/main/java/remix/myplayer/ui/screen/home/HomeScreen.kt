@@ -56,6 +56,7 @@ import remix.myplayer.ui.widget.app.MultiSelectBar
 import remix.myplayer.ui.widget.app.ViewPager
 import remix.myplayer.viewmodel.libraryViewModel
 import remix.myplayer.viewmodel.mainViewModel
+import remix.myplayer.ui.nav.LocalNavController
 import remix.myplayer.viewmodel.settingViewModel
 import remix.myplayer.viewmodel.smbViewModel
 import remix.myplayer.viewmodel.webDavViewModel
@@ -69,6 +70,11 @@ fun HomeScreen() {
   val multiSelectState by mainVM.multiSelectState.collectAsStateWithLifecycle()
   val drawerState = rememberDrawerState(DrawerValue.Closed)
   val scope = rememberCoroutineScope()
+
+  // 听歌识曲的快捷入口请求统一由 AppNav 消费（见 AppNav.kt），这里不再重复处理
+
+  // 首次进入弹"二改版"提示，只弹一次
+  FirstRunAboutDialog(libraryVM.settingPrefs)
 
   BackHandler(enabled = drawerState.isOpen || multiSelectState.isShowing()) {
     if (drawerState.isOpen) {

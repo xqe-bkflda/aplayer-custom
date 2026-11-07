@@ -19,6 +19,9 @@ data class Library(
       TAG_GENRE -> R.string.tab_genre
       TAG_FOLDER -> R.string.tab_folder
       TAG_REMOTE -> R.string.tab_remote
+      TAG_NETEASE -> R.string.tab_netease
+      TAG_HISTORY -> R.string.tab_history
+      TAG_ONLINE -> R.string.tab_online
       else -> throw IllegalArgumentException("unknown tag: $tag")
     }
 
@@ -50,9 +53,10 @@ data class Library(
       )
 
       TAG_PLAYLIST -> listOf(
+        R.string.create_time_desc,
+        R.string.create_time,
         R.string.name,
-        R.string.name_desc,
-        R.string.create_time
+        R.string.name_desc
       )
 
       TAG_GENRE -> listOf(
@@ -63,6 +67,23 @@ data class Library(
       TAG_FOLDER -> listOf(
         R.string.name,
         R.string.name_desc
+      )
+
+      TAG_NETEASE -> listOf(
+        R.string.create_time_desc,
+        R.string.create_time,
+        R.string.name,
+        R.string.name_desc
+      )
+
+      TAG_HISTORY -> listOf(
+        R.string.create_time_desc,
+        R.string.create_time
+      )
+
+      TAG_ONLINE -> listOf(
+        R.string.create_time_desc,
+        R.string.create_time
       )
 
       else -> throw IllegalArgumentException("unknown tag: $tag")
@@ -96,9 +117,10 @@ data class Library(
       )
 
       TAG_PLAYLIST -> listOf(
+        SortOrder.PLAYLIST_DATE_DESC,
+        SortOrder.PLAYLIST_DATE,
         SortOrder.PLAYLIST_A_Z,
-        SortOrder.PLAYLIST_Z_A,
-        SortOrder.PLAYLIST_DATE
+        SortOrder.PLAYLIST_Z_A
       )
 
       TAG_GENRE -> listOf(
@@ -109,6 +131,23 @@ data class Library(
       TAG_FOLDER -> listOf(
         SortOrder.FOLDER_A_Z,
         SortOrder.FOLDER_Z_A
+      )
+
+      TAG_NETEASE -> listOf(
+        SortOrder.PLAYLIST_DATE_DESC,
+        SortOrder.PLAYLIST_DATE,
+        SortOrder.PLAYLIST_A_Z,
+        SortOrder.PLAYLIST_Z_A
+      )
+
+      TAG_HISTORY -> listOf(
+        SortOrder.DATE_DESC,
+        SortOrder.DATE
+      )
+
+      TAG_ONLINE -> listOf(
+        SortOrder.DATE_DESC,
+        SortOrder.DATE
       )
 
       else -> throw IllegalArgumentException("unknown tag: $tag")
@@ -123,15 +162,25 @@ data class Library(
     const val TAG_PLAYLIST = 4
     const val TAG_FOLDER = 5
     const val TAG_REMOTE = 6
+    const val TAG_NETEASE = 7
+    const val TAG_HISTORY = 8
+    const val TAG_ONLINE = 9
 
+    /**
+     * 曲库目录默认顺序（对应设置里「曲库目录」的排列）：
+     * 网易云 / 歌曲 / 在线音乐 / 最近播放 开着，其余默认关闭但保留在列表里可勾选。
+     */
     val default = listOf(
+      Library(TAG_NETEASE),
       Library(TAG_SONG),
-      Library(TAG_ALBUM),
-      Library(TAG_ARTIST),
-      Library(TAG_GENRE),
-      Library(TAG_PLAYLIST),
-      Library(TAG_FOLDER),
-      Library(TAG_REMOTE)
+      Library(TAG_ONLINE),
+      Library(TAG_HISTORY),
+      Library(TAG_ALBUM, false),
+      Library(TAG_ARTIST, false),
+      Library(TAG_GENRE, false),
+      Library(TAG_PLAYLIST, false),
+      Library(TAG_FOLDER, false),
+      Library(TAG_REMOTE, false)
     )
 
   }

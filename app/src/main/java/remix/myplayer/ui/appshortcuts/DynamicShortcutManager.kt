@@ -10,6 +10,7 @@ import remix.myplayer.BuildConfig
 import remix.myplayer.ui.appshortcuts.shortcuttype.BaseShortcutType.Companion.ID_PREFIX
 import remix.myplayer.ui.appshortcuts.shortcuttype.LastAddedShortcutType
 import remix.myplayer.ui.appshortcuts.shortcuttype.MyLoveShortcutType
+import remix.myplayer.ui.appshortcuts.shortcuttype.RecognizeShortcutType
 import remix.myplayer.ui.appshortcuts.shortcuttype.ShuffleShortcutType
 
 /**
@@ -22,7 +23,8 @@ class DynamicShortcutManager(private val context: Context) : ContextWrapper(cont
   private val defaultShortcut: List<ShortcutInfo>
     get() = listOf(ShuffleShortcutType(context).shortcutInfo,
         MyLoveShortcutType(context).shortcutInfo,
-        LastAddedShortcutType(context).shortcutInfo)
+        LastAddedShortcutType(context).shortcutInfo,
+        RecognizeShortcutType(context).shortcutInfo)
 
   init {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)

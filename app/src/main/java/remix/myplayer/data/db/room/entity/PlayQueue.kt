@@ -21,6 +21,13 @@ data class PlayQueue(
   var account: String? = null
   var pwd: String? = null
 
+  /**
+   * 网易云歌曲 id（在线歌曲才有）。
+   * 队列里存下来，冷启动恢复队列后播放页才能按 id 精确认出这首歌，
+   * 否则只能靠歌名猜，同名歌会收藏串号。
+   */
+  var netease_id: Long? = null
+
 
   companion object {
     const val TABLE_NAME = "PlayQueue"

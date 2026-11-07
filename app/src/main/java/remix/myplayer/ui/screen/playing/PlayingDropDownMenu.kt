@@ -74,15 +74,12 @@ fun PlayingDropDownMenu(
 
   val menuItems =
     listOf(
-      R.string.song_edit,
       R.string.song_detail,
-      R.string.collect,
       R.string.add_to_playlist,
       R.string.sleep_timer,
       R.string.eq,
       R.string.lyric,
       R.string.speed,
-      R.string.delete,
     )
   val activity = LocalActivity.current as? BaseActivity
 
@@ -177,16 +174,6 @@ fun PlayingDropDownMenu(
         text = { Text(stringResource(res), color = LocalTheme.current.textPrimary) },
         onClick = {
           when (res) {
-            R.string.song_edit -> {
-              if (activity == null) {
-                return@DropdownMenuItem
-              }
-              if (song.isLocal()) {
-                tagEditVM.startTagEdit(song)
-                navigateFromPlayingScreen(RouteTagEdit)
-              }
-            }
-
             R.string.song_detail -> {
               if (activity == null) {
                 return@DropdownMenuItem
@@ -196,16 +183,6 @@ fun PlayingDropDownMenu(
 
             R.string.add_to_playlist -> {
               settingVM.showAddSongToPlayListDialog(listOf(song.id))
-            }
-
-            R.string.collect -> {
-              if (activity == null) {
-                return@DropdownMenuItem
-              }
-              val favorite =
-                libraryVM.playLists.value.firstOrNull { it.isFavorite() } ?: return@DropdownMenuItem
-
-              libraryVM.addSongsToPlayList(listOf(song.id), favorite.name)
             }
 
             R.string.sleep_timer -> {
@@ -233,9 +210,6 @@ fun PlayingDropDownMenu(
               speedDialogState.show()
             }
 
-            R.string.delete -> {
-              settingVM.showDeleteSongDialog(listOf(song))
-            }
           }
 
           onDismissRequest()
@@ -257,7 +231,6 @@ private fun LyricSettingDialog(
     R.string.local,
     R.string.kugou,
     R.string.netease,
-    R.string.qq,
     R.string.select_lrc,
     if (!alreadyIgnore) R.string.ignore_lrc else R.string.cancel_ignore_lrc,
     R.string.lyric_adjust_font_size,
@@ -292,24 +265,20 @@ private fun LyricSettingDialog(
         }
 
         4 -> {
-          onSaveLyric(LyricOrder.Qq)
-        }
-
-        5 -> {
           onSaveLyric(LyricOrder.Manual)
         }
 
-        6 -> {
+        5 -> {
           onSaveLyric(if (!alreadyIgnore) LyricOrder.Ignore else LyricOrder.Def)
         }
 
         // 调整歌词字体缩放
-        7 -> {
+        6 -> {
           fontScaleDialogState.show()
         }
 
         // 调整歌词offset
-        8 -> {
+        7 -> {
           sendLocalBroadcast(Intent(ACTION_LYRIC).putExtra(EXTRA_LYRIC, SHOW_OFFSET_PANEL))
         }
       }

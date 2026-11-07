@@ -22,6 +22,9 @@ import remix.myplayer.ui.screen.library.AlbumScreen
 import remix.myplayer.ui.screen.library.ArtistScreen
 import remix.myplayer.ui.screen.library.FolderScreen
 import remix.myplayer.ui.screen.library.GenreScreen
+import remix.myplayer.ui.screen.library.HistoryTabScreen
+import remix.myplayer.ui.screen.library.NetEaseScreen
+import remix.myplayer.ui.screen.library.OnlineMusicLibraryScreen
 import remix.myplayer.ui.screen.library.PlayListScreen
 import remix.myplayer.ui.screen.library.SongScreen
 import remix.myplayer.viewmodel.settingViewModel
@@ -49,6 +52,9 @@ fun ViewPager(
       Library.TAG_PLAYLIST -> PlayListScreen()
       Library.TAG_FOLDER -> FolderScreen()
       Library.TAG_REMOTE -> RemoteScreen()
+      Library.TAG_NETEASE -> NetEaseScreen()
+      Library.TAG_HISTORY -> HistoryTabScreen()
+      Library.TAG_ONLINE -> OnlineMusicLibraryScreen()
       else -> PageContent("Page: ${libraries[page]}")
     }
   }

@@ -164,7 +164,8 @@ sealed class Song(
           track ?: this.track,
           dateModified,
           account,
-          pwd
+          pwd,
+          neteaseId
         )
       }
 
@@ -261,9 +262,21 @@ sealed class Song(
     track: String?,
     dateModified: Long,
     val account: String,
-    val pwd: String
+    val pwd: String,
+    /**
+     * 网易云歌曲 id，0 表示不是网易云来源（webdav / smb / 直链）。
+     *
+     * 带上它以后：
+     * 1) 播放页能精确反查回 NetEaseSong，不再靠「歌名+歌手」模糊匹配，
+     *    同名歌/多版本歌不会收藏串到别的歌上；
+     * 2) id 用网易云 id 算，稳定不变。原来用 data.hashCode()，
+     *    而网易云直链带 expires 每次解析都不一样，同一首歌的 id 会变，
+     *    队列去重和切歌顺序就乱了。
+     */
+    val neteaseId: Long = 0L
   ) : Song(
-    -abs(data.hashCode().toLong()), title, title, album, 0L, artist, 0L, duration, data, size, year, genre, track, dateModified
+    if (neteaseId > 0L) -neteaseId else -abs(data.hashCode().toLong()),
+    title, title, album, 0L, artist, 0L, duration, data, size, year, genre, track, dateModified
   ) {
     val headers by lazy {
       mapOf(

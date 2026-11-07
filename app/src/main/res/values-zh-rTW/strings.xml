@@ -30,7 +30,7 @@
   <string name="back">返回</string>
   <string name="about_feedback_title">問題回報</string>
   <string name="about_github_title">GitHub</string>
-  <string name="about_github_subtitle">檢視原始碼</string>
+  <string name="about_github_subtitle">檢視原項目</string>
   <string name="about_release_title">歷史版本</string>
   <string name="about_release_subtitle">檢視所有已發布版本</string>
   <string name="about_feedback_subtitle">回報問題與建議</string>
@@ -126,7 +126,6 @@
   <string name="mylove_cant_edit">我的最愛清單不可編輯</string>
   <string name="error">錯誤</string>
   <string name="share_to">分享到</string>
-  <string name="qq">QQ</string>
   <string name="weibo">微博</string>
   <string name="wechat">WeChat</string>
   <string name="circlefriend">WeChat 朋友圈</string>
@@ -158,7 +157,7 @@
   <string name="ui_font_size">介面字體大小</string>
   <string name="ui_font_size_preview">預覽文字</string>
   <string name="lrc">歌詞</string>
-  <string name="setting_lyric_desc">桌面歌詞、狀態列歌詞與來源</string>
+  <string name="setting_lyric_desc">桌面歌詞與來源</string>
   <string name="music_filter">音訊排除</string>
   <string name="lrc_scan">歌詞掃描路徑</string>
   <string name="lockscreen_show">螢幕鎖定設定</string>
@@ -193,7 +192,7 @@
   <string name="clear_cache">清除暫存</string>
   <string name="support_develop">支援我們</string>
   <string name="choose">選擇</string>
-  <string name="donate_tip">您的支持，是我們進步的動力。</string>
+  <string name="donate_tip">去支持 APlayer 原作者</string>
   <string name="jump_alipay_account">跳轉支付寶</string>
   <string name="already_copy">已複製到剪貼簿</string>
   <string name="confirm_delete_playlist">是否移除所選播放清單？</string>
@@ -219,6 +218,7 @@
   <string name="no_lrc">暫無歌詞</string>
   <string name="local_list">本地播放清單</string>
   <string name="next_song">下一首: %s</string>
+  <string name="no_next_song">沒有下一首</string>
   <string name="please_wait">請稍等</string>
   <string name="processing_picture">圖片處理中</string>
   <string name="clear_success">清除成功</string>
@@ -579,4 +579,11 @@
   <string name="title_dynamic_smb">SMB 客戶端</string>
   <string name="select_image">選擇圖片</string>
   <string name="clear_cover">清除封面</string>
+  <string name="create_time_desc">建立時間（新→舊）</string>
+  <string name="tab_netease">網易雲</string>
+  <string name="download">下載</string>
+  <string name="setting_download_desc">線上音樂的下載、音質與歌詞設定</string>
+  <string name="tab_history">最近播放</string>
+  <string name="tab_online">線上音樂</string>
+<string name="recognize_song">聽歌識曲</string>
 </resources>

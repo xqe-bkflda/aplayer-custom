@@ -241,7 +241,7 @@ private fun PlayQueueDialog(
 
       val lazyState = rememberLazyListState()
       LazyColumn(state = lazyState) {
-        itemsIndexed(songs, key = { _, song -> song.id }) { pos, song ->
+        itemsIndexed(songs, key = { pos, song -> "${song.id}_" + pos }) { pos, song ->
           Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -284,6 +284,27 @@ private fun PlayQueueDialog(
                 )
               }
             }
+          }
+        }
+
+        // 下一曲提示：作为队列列表的最后一项，随队列一起滚动
+        val nextSong = musicState.nextSong
+        item {
+          CenterInBox(
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(horizontal = 16.dp, vertical = 10.dp)
+          ) {
+            TextSecondary(
+              if (nextSong.title.isNotBlank() && nextSong.valid()) {
+                stringResource(R.string.next_song, nextSong.title)
+              } else {
+                stringResource(R.string.no_next_song)
+              },
+              fontSize = 12.sp,
+              maxLine = 1,
+              textAlign = TextAlign.Center
+            )
           }
         }
       }

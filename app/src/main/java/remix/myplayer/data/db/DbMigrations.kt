@@ -61,6 +61,24 @@ internal object DbMigrations {
     }
   }
 
+  val migration7to8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `title` TEXT NOT NULL DEFAULT ''")
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `artist` TEXT NOT NULL DEFAULT ''")
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `album` TEXT NOT NULL DEFAULT ''")
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `data` TEXT NOT NULL DEFAULT ''")
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `duration` INTEGER NOT NULL DEFAULT 0")
+      db.execSQL("ALTER TABLE `History` ADD COLUMN `is_remote` INTEGER NOT NULL DEFAULT 0")
+    }
+  }
+
+  val migration8to9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+      // 播放队列记住网易云歌曲 id，冷启动恢复队列后播放页才能精确识别
+      db.execSQL("ALTER TABLE `PlayQueue` ADD COLUMN `netease_id` INTEGER")
+    }
+  }
+
   val migration6to7 = object : Migration(6, 7) {
     override fun migrate(db: SupportSQLiteDatabase) {
       db.execSQL("CREATE TABLE IF NOT EXISTS `Smb` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `alias` TEXT NOT NULL, `domain` TEXT, `account` TEXT NOT NULL, `pwd` TEXT NOT NULL, `server` TEXT NOT NULL, `share` TEXT NOT NULL, `lastUrl` TEXT NOT NULL, `createAt` INTEGER NOT NULL)")

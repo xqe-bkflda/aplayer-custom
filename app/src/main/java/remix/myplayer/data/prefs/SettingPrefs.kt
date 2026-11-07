@@ -31,25 +31,29 @@ class SettingPrefs @Inject constructor(
 ) : AbstractPref(context, PrefKeys.Setting.NAME) {
 
   var firstLoad by PrefsDelegate(sp, PrefKeys.Setting.FIRST_LOAD, true)
+  var firstRunAboutShown by PrefsDelegate(sp, PrefKeys.Setting.FIRST_RUN_ABOUT_SHOWN, false)
 
   var libraryJson by PrefsDelegate(sp, PrefKeys.Setting.LIBRARY, "")
 
+  /** 曲库配置版本，用于一次性迁移默认值 */
+  var libraryVersion by PrefsDelegate(sp, PrefKeys.Setting.LIBRARY_VERSION, 0)
+
   var scanSize by PrefsDelegate(sp, PrefKeys.Setting.SCAN_SIZE, MB)
 
-  var songSortOrder by PrefsDelegate(sp, PrefKeys.Setting.SONG_SORT_ORDER, SortOrder.SONG_A_Z)
+  var songSortOrder by PrefsDelegate(sp, PrefKeys.Setting.SONG_SORT_ORDER, SortOrder.DATE_DESC)
   var albumSortOrder by PrefsDelegate(sp, PrefKeys.Setting.ALBUM_SORT_ORDER, SortOrder.ALBUM_A_Z)
   var artistSortOrder by PrefsDelegate(sp, PrefKeys.Setting.ARTIST_SORT_ORDER, SortOrder.ARTIST_A_Z)
   var playlistSortOrder by PrefsDelegate(
     sp,
     PrefKeys.Setting.PLAYLIST_SORT_ORDER,
-    SortOrder.PLAYLIST_DATE
+    SortOrder.PLAYLIST_DATE_DESC
   )
   var genreSortOrder by PrefsDelegate(sp, PrefKeys.Setting.GENRE_SORT_ORDER, SortOrder.GENRE_A_Z)
   var folderSortOrder by PrefsDelegate(sp, PrefKeys.Setting.FOLDER_SORT_ORDER, SortOrder.FOLDER_A_Z)
   var historySortOrder by PrefsDelegate(
     sp,
     PrefKeys.Setting.HISTORY_SORT_ORDER,
-    SortOrder.PLAY_COUNT_DESC
+    SortOrder.LAST_PLAY_DESC
   )
 
   var albumDetailSortOrder by PrefsDelegate(
@@ -130,7 +134,7 @@ class SettingPrefs @Inject constructor(
     DECODER_MODE_DEFAULT
   )
   var autoPlay by PrefsDelegate(sp, PrefKeys.Setting.AUTO_PLAY, NEVER)
-  var crossFade by PrefsDelegate(sp, PrefKeys.Setting.CROSS_FADE, false)
+  var crossFade by PrefsDelegate(sp, PrefKeys.Setting.CROSS_FADE, true)
   var speed by PrefsDelegate(sp, PrefKeys.Setting.SPEED, "1.0")
   var replayGainEnabled by PrefsDelegate(sp, PrefKeys.Setting.REPLAY_GAIN_ENABLED, false)
   var replayGainMode by PrefsDelegate(sp, PrefKeys.Setting.REPLAY_GAIN_MODE, REPLAY_GAIN_MODE_TRACK)

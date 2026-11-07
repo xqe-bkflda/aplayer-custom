@@ -76,6 +76,8 @@ class PlayQueueRepoImpl @Inject constructor(
       if (song is Song.Remote) {
         account = song.account
         pwd = song.pwd
+        // 存下网易云 id，冷启动恢复队列后还能精确认回这首歌
+        if (song.neteaseId > 0L) netease_id = song.neteaseId
       }
     }
   }
@@ -116,10 +118,20 @@ class PlayQueueRepoImpl @Inject constructor(
     // 处理远程歌曲
     remote.forEach { queue ->
       val remoteSong = Song.Remote(
-        queue.title,
-        queue.data,
-        queue.account ?: "",
-        queue.pwd ?: ""
+        title = queue.title,
+        album = "",
+        artist = "",
+        duration = 0L,
+        data = queue.data,
+        size = 0L,
+        year = "",
+        genre = "",
+        track = "",
+        dateModified = 0L,
+        account = queue.account ?: "",
+        pwd = queue.pwd ?: "",
+        // 恢复出来的 Remote 要把网易云 id 带回去，播放页才认得出是哪一首
+        neteaseId = queue.netease_id ?: 0L
       )
       if (remoteSong.valid()) {
         songs.add(remoteSong)

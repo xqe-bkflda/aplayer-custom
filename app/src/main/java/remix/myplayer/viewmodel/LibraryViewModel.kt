@@ -87,7 +87,27 @@ class LibraryViewModel @Inject constructor(
 
   val historySongs = historyRepo.allHistories().map { histories ->
     histories.mapNotNull { history ->
-      val song = withContext(Dispatchers.IO) { songRepo.song(history.audio_id) }
+      val song = withContext(Dispatchers.IO) {
+        if (history.is_remote && history.data.isNotEmpty()) {
+          // 在线歌曲没有本地库记录，直接用历史里存下的元数据还原
+          Song.Remote(
+            title = history.title,
+            album = history.album,
+            artist = history.artist,
+            duration = history.duration,
+            data = history.data,
+            size = 0L,
+            year = "",
+            genre = "",
+            track = null,
+            dateModified = 0L,
+            account = "",
+            pwd = ""
+          )
+        } else {
+          songRepo.song(history.audio_id)
+        }
+      }
       song?.let { it to history.play_count }
     }
   }.stateIn(

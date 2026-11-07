@@ -43,7 +43,8 @@ fun ProvideViewModels(content: @Composable () -> Unit) {
     LocalTimerViewModel provides activityViewModel(),
     LocalWebDavViewModel provides activityViewModel(),
     LocalSmbViewModel provides activityViewModel(),
-    LocalPlaybackViewModel provides activityViewModel()
+    LocalPlaybackViewModel provides activityViewModel(),
+    LocalOnlineMusicViewModel provides activityViewModel()
   ) {
     content()
   }

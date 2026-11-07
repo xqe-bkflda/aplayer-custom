@@ -154,15 +154,23 @@ class SettingViewModel @Inject constructor(
 
   init {
     // load libraries
-    val libraries = try {
-      Json.decodeFromString<List<Library>>(settingPrefs.libraryJson)
+    // 曲库默认值改过一次（只开网易云 + 歌曲 + 最近播放），老用户强制迁移一次
+    val libraries = if (settingPrefs.libraryVersion < LIBRARY_CONFIG_VERSION) {
+      settingPrefs.libraryVersion = LIBRARY_CONFIG_VERSION
+      Library.default
+    } else try {
+      val saved = Json.decodeFromString<List<Library>>(settingPrefs.libraryJson)
         .ifEmpty { Library.default }
+      // 老版本配置里没有网易云标签，补一个进去
+      if (saved.any { it.tag == Library.TAG_NETEASE }) saved
+      else saved + Library(Library.TAG_NETEASE)
     } catch (_: Exception) {
       Library.default
     }
 
     updateAllLibraries(libraries)
-    changeLibrary(enabledLibraries.value[0])
+    // 全关配置会让 value[0] 越界，兜底回到默认曲库
+    changeLibrary(enabledLibraries.value.firstOrNull() ?: Library.default.first())
   }
 
   fun updateAllLibraries(libraries: List<Library>) {
@@ -565,3 +573,6 @@ class SettingViewModel @Inject constructor(
     }
   }
 }
+
+/** 曲库默认配置版本，改默认值时 +1 即可强制迁移 */
+private const val LIBRARY_CONFIG_VERSION = 3

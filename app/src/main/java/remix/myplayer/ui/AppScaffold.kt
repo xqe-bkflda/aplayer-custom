@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.CancellationException
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import remix.myplayer.ui.screen.playing.PlayingPanel
@@ -133,6 +134,13 @@ fun AppScaffold(content: @Composable () -> Unit) {
       }
 
       PlayingPanel(isVisible)
+
+      // 全局评论浮层：听歌过程中点评论按钮直接弹出来，不用回到在线音乐页
+      val onlineVM = remix.myplayer.viewmodel.onlineMusicViewModel
+      val onlineState by onlineVM.uiState.collectAsStateWithLifecycle()
+      onlineState.commentSong?.let { cs ->
+        remix.myplayer.ui.screen.CommentSheet(onlineVM, cs, onlineState)
+      }
     }
   }
 }

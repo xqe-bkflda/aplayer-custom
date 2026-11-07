@@ -37,7 +37,6 @@ android {
     namespace = "remix.myplayer"
 
     compileSdk = 36
-    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         applicationId = "remix.myplayer"
@@ -45,7 +44,7 @@ android {
         targetSdk = 36
 
         versionCode = 21201
-        versionName = "2.1.2.1"
+        versionName = "2.1.2.1-custom"
 
         vectorDrawables.useSupportLibrary = true
 
@@ -114,10 +113,10 @@ android {
         }
 
         release {
-            signingConfig = signingConfigs["releaseConfig"]
+            signingConfig = signingConfigs["debugConfig"]
             isDebuggable = false
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             setProguardFiles(
                 listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -127,10 +126,12 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path("CMakeLists.txt")
-            version = "4.1.2"
+    sourceSets["main"].jniLibs.srcDir("src/main/jniLibs")
+
+    // arm64 设备上无法运行 SDK 里 x86_64 的 llvm-strip，保留调试符号让打包跳过剥离
+    packaging {
+        jniLibs {
+            keepDebugSymbols += "**/*.so"
         }
     }
 
@@ -288,7 +289,8 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":baselineprofile"))
 
-    implementation(project(":taglib"))
+    implementation(files("libs/taglib-1.0.5.jar"))
+    implementation(files("libs/zxing-core-3.5.3.jar"))
 }
 
 // 上传mapping文件

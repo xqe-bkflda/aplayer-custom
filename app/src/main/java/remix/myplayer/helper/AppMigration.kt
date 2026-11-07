@@ -56,7 +56,7 @@ class AppMigration @Inject constructor(
         fixSortOrder(
           settingPrefs.playlistSortOrder,
           Library(Library.TAG_PLAYLIST).sortOrders,
-          SortOrder.PLAYLIST_DATE
+          SortOrder.PLAYLIST_DATE_DESC
         )
       settingPrefs.genreSortOrder =
         fixSortOrder(

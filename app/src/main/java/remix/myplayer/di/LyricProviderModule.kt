@@ -12,7 +12,6 @@ import remix.myplayer.lyric.provider.IgnoredProvider
 import remix.myplayer.lyric.provider.LocalFileProvider
 import remix.myplayer.lyric.provider.network.KuGouProvider
 import remix.myplayer.lyric.provider.network.NetEaseProvider
-import remix.myplayer.lyric.provider.network.QQProvider
 import javax.inject.Singleton
 
 @Module
@@ -33,11 +32,6 @@ object LyricProviderModule {
   @Singleton
   @IntoSet
   fun provideKuGou(kuGouProvider: KuGouProvider): ILyricsProvider = kuGouProvider
-
-  @Provides
-  @Singleton
-  @IntoSet
-  fun provideQQ(provider: QQProvider): ILyricsProvider = provider
 
   @Provides
   @Singleton

@@ -64,6 +64,7 @@ import remix.myplayer.ui.dialog.NormalDialog
 import remix.myplayer.ui.dialog.rememberDialogState
 import remix.myplayer.ui.nav.LocalNavController
 import remix.myplayer.ui.nav.MessageNotifier
+import remix.myplayer.ui.nav.RouteDeclaration
 import remix.myplayer.ui.nav.RouteSupport
 import remix.myplayer.ui.theme.LocalTheme
 import remix.myplayer.ui.widget.common.CommonAppBar
@@ -175,7 +176,7 @@ private fun AboutHeader(
   Spacer(modifier = Modifier.height(titleSpacing))
 
   TextPrimary(
-    text = stringResource(id = R.string.app_name),
+    text = "aplayer",
     fontSize = titleSize,
     fontWeight = FontWeight.Bold
   )
@@ -199,22 +200,6 @@ private fun AboutActionList() {
   val context = LocalContext.current
   val nav = LocalNavController.current
   val scope = rememberCoroutineScope()
-  val feedbackDialogState = rememberDialogState()
-
-  NormalDialog(
-    dialogState = feedbackDialogState,
-    titleRes = R.string.send_log,
-    positiveRes = R.string.yes,
-    negativeRes = R.string.no,
-    neutralRes = R.string.cancel,
-    onPositive = {
-      sendFeedback(context, scope, true)
-    },
-    onNegative = {
-      sendFeedback(context, scope, false)
-    }
-  )
-
   Column(
     modifier = Modifier
       .fillMaxWidth()
@@ -232,22 +217,10 @@ private fun AboutActionList() {
       onClick = { openUrl(context, REPO_URL) }
     )
     AboutItem(
-      title = stringResource(R.string.about_release_title),
-      subtitle = stringResource(R.string.about_release_subtitle),
+      title = "声明",
+      subtitle = "改动清单、接口来源与免责声明",
       imageVector = Icons.Default.Build,
-      onClick = { openUrl(context, RELEASES_URL) }
-    )
-    AboutItem(
-      title = stringResource(R.string.about_feedback_title),
-      subtitle = stringResource(R.string.about_feedback_subtitle),
-      imageVector = Icons.Default.Email,
-      onClick = { feedbackDialogState.show() }
-    )
-    AboutItem(
-      title = stringResource(R.string.about_share_chooser),
-      subtitle = stringResource(R.string.about_share_subtitle),
-      imageVector = Icons.Default.Share,
-      onClick = { shareApp(context) }
+      onClick = { nav.navigate(RouteDeclaration) }
     )
     AboutItem(
       title = stringResource(R.string.about_privacy_title),

@@ -23,6 +23,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,10 +46,16 @@ import remix.myplayer.misc.cache.DiskCache
 import remix.myplayer.ui.AppScaffold
 import remix.myplayer.ui.dialog.DialogContainer
 import remix.myplayer.ui.screen.AboutScreen
+import remix.myplayer.ui.screen.DeclarationScreen
 import remix.myplayer.ui.screen.CustomSortScreen
 import remix.myplayer.ui.screen.EQScreen
 import remix.myplayer.ui.screen.LastAddedScreen
 import remix.myplayer.ui.screen.SearchScreen
+import remix.myplayer.ui.screen.KuGouRankScreen
+import remix.myplayer.ui.screen.NetEaseLoginScreen
+import remix.myplayer.ui.screen.NetEasePlaylistScreen
+import remix.myplayer.ui.screen.OnlineMusicScreen
+import remix.myplayer.ui.screen.RecognizeScreen
 import remix.myplayer.ui.screen.SongChooserScreen
 import remix.myplayer.ui.screen.SupportScreen
 import remix.myplayer.ui.screen.TagEditScreen
@@ -73,6 +80,7 @@ const val RouteSettingDetail = "setting_detail"
 const val RouteReplayGain = "replay_gain"
 const val RouteSongChoose = "song_choose"
 const val RouteAbout = "about"
+const val RouteDeclaration = "declaration"
 const val RouteCustomSort = "custom_sort"
 const val RouteLastAdded = "last_added"
 const val RouteHistory = "history"
@@ -82,6 +90,13 @@ const val RouteCustomCoverCrop = "custom_cover_crop"
 const val RouteTagEditCrop = "tag_edit_crop"
 const val RouteEq = "eq"
 const val RouteSupport = "support"
+const val RouteOnlineMusic = "online_music"
+const val RouteNetEaseLogin = "netease_login"
+const val RouteKuGouRank = "kgrank"
+const val RouteNetEasePlaylist = "netease_playlist"
+const val RouteNetEaseRadar = "netease_radar"
+const val RouteNetEaseLiked = "netease_liked"
+const val RouteRecognize = "recognize"
 
 // 存在目标页 NavBackStackEntry.savedStateHandle 里的标志，
 // 标记该页是从播放页浮窗跳转过来的，退出时需要恢复浮窗
@@ -97,6 +112,18 @@ fun AppNav() {
       AppScaffold {
         Box(modifier = Modifier.fillMaxSize()) {
           DialogContainer()
+
+          // 桌面长按「听歌识曲」：AppNav 常驻组合，冷/热启动都能消费这个请求
+          val appNavController = LocalNavController.current
+          val recognizeRequested = AppEntryRequests.openRecognize
+          LaunchedEffect(recognizeRequested) {
+            if (recognizeRequested) {
+              AppEntryRequests.openRecognize = false
+              runCatching {
+                appNavController.navigate(RouteRecognize) { launchSingleTop = true }
+              }
+            }
+          }
 
           NavHost(LocalNavController.current, startDestination = RouteHome) {
             normalAnimatedScreen(
@@ -133,6 +160,10 @@ fun AppNav() {
 
             normalAnimatedScreen(RouteAbout) {
               AboutScreen()
+            }
+
+            normalAnimatedScreen(RouteDeclaration) {
+              DeclarationScreen()
             }
 
             composable<DetailScreenRoute>(
@@ -251,6 +282,65 @@ fun AppNav() {
 
             normalAnimatedScreen(RouteEq) {
               EQScreen(it)
+            }
+
+            normalAnimatedScreen(RouteOnlineMusic) {
+              OnlineMusicScreen()
+            }
+
+            normalAnimatedScreen(RouteNetEaseLogin) {
+              NetEaseLoginScreen()
+            }
+
+            normalAnimatedScreen(
+              "$RouteKuGouRank/{id}/{name}",
+              arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
+                navArgument("name") { type = NavType.StringType }
+              )
+            ) {
+              val id = it.arguments?.getInt("id") ?: return@normalAnimatedScreen
+              val name = Uri.decode(it.arguments?.getString("name") ?: return@normalAnimatedScreen)
+              KuGouRankScreen(id, name)
+            }
+
+            // 网易云歌单详情（独立页面，不再嵌在搜索页里）
+            normalAnimatedScreen(
+              "$RouteNetEasePlaylist/{id}/{name}",
+              arguments = listOf(
+                navArgument("id") { type = NavType.LongType },
+                navArgument("name") { type = NavType.StringType }
+              )
+            ) {
+              val id = it.arguments?.getLong("id") ?: return@normalAnimatedScreen
+              val name = Uri.decode(it.arguments?.getString("name") ?: return@normalAnimatedScreen)
+              NetEasePlaylistScreen(playlistId = id, title = name)
+            }
+
+            // 雷达 / 榜单详情
+            normalAnimatedScreen(
+              "$RouteNetEaseRadar/{id}/{name}",
+              arguments = listOf(
+                navArgument("id") { type = NavType.LongType },
+                navArgument("name") { type = NavType.StringType }
+              )
+            ) {
+              val id = it.arguments?.getLong("id") ?: return@normalAnimatedScreen
+              val name = Uri.decode(it.arguments?.getString("name") ?: return@normalAnimatedScreen)
+              NetEasePlaylistScreen(playlistId = id, title = name, isRadar = true)
+            }
+
+            // 我喜欢的音乐
+            normalAnimatedScreen(RouteNetEaseLiked) {
+              NetEasePlaylistScreen(
+                playlistId = 0L,
+                title = "我喜欢的音乐",
+                likedOnly = true
+              )
+            }
+
+            normalAnimatedScreen(RouteRecognize) {
+              RecognizeScreen()
             }
 
             normalAnimatedScreen(RouteSupport) {

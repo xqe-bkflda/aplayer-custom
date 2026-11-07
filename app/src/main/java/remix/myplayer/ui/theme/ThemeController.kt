@@ -32,6 +32,11 @@ interface ThemeController {
 
 class ThemeControllerImpl @Inject constructor(private val storage: ThemePrefs) : ThemeController {
 
+  init {
+    // 启动时跑一次性迁移：老用户存的旧蓝色主调会被替换成新的金色默认值
+    storage.migratePrimaryColorOnce()
+  }
+
   private val _currentTheme: MutableState<AppTheme> = mutableStateOf(
     AppTheme(
       primary = Color(storage.primaryColor),

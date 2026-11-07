@@ -8,7 +8,6 @@ import remix.myplayer.data.prefs.LyricPrefs
 import remix.myplayer.lyric.LyricSearcher
 import remix.myplayer.lyric.provider.network.KuGouProvider
 import remix.myplayer.lyric.provider.network.NetEaseProvider
-import remix.myplayer.lyric.provider.network.QQProvider
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,13 +16,11 @@ import javax.inject.Singleton
 class DefProvider @Inject constructor(
   @param:ApplicationContext
   private val context: Context,
-  // 默认优先级排序 内嵌-本地-酷狗-网易-QQ-忽略
   private val lyricPrefs: LyricPrefs,
   private val embeddedProvider: EmbeddedProvider,
   private val localProvider: LocalFileProvider,
   private val kuGouProvider: KuGouProvider,
   private val netEaseProvider: NetEaseProvider,
-  private val qqProvider: QQProvider,
   private val ignoreProvider: IgnoredProvider
 ) : ILyricsProvider {
 
@@ -32,7 +29,6 @@ class DefProvider @Inject constructor(
     LyricOrder.Local to localProvider,
     LyricOrder.Kugou to kuGouProvider,
     LyricOrder.Netease to netEaseProvider,
-    LyricOrder.Qq to qqProvider,
     LyricOrder.Ignore to ignoreProvider
   )
 
@@ -57,7 +53,6 @@ class DefProvider @Inject constructor(
         localProvider,
         kuGouProvider,
         netEaseProvider,
-        qqProvider,
         ignoreProvider
       )
     }

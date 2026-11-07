@@ -54,7 +54,9 @@ class KuGouClient @Inject constructor(
           title = obj.optString("SongName"),
           artists = artists,
           album = obj.optString("AlbumName"),
-          durationMs = obj.optLong("Duration") * 1000
+          // 搜索接口的 Duration 是秒；歌词候选接口的 duration 是毫秒，
+          // 两处统一成毫秒后才能按时长匹配歌词。
+          durationMs = obj.optLong("Duration").let { if (it > 0 && it < 10000) it * 1000 else it }
         )
       )
     }
@@ -145,8 +147,18 @@ class KuGouClient @Inject constructor(
         )
       )
     }
-    // 这里默认返回服务端顺序
-    return list
+    // 服务端只给一个候选列表，顺序不保证是这首歌的：
+    // 按时长差（毫秒）优先、score 次之排序，避免把别的歌的歌词套上来。
+    val targetDuration = song.durationMs
+    return list.sortedWith(
+      compareBy<KugouLyricCandidate> {
+        if (it.durationMs > 0 && targetDuration > 0) {
+          kotlin.math.abs(it.durationMs - targetDuration)
+        } else {
+          Long.MAX_VALUE
+        }
+      }.thenByDescending { it.score }
+    )
   }
 
   /**

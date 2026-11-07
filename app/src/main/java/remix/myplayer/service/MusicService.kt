@@ -681,9 +681,10 @@ class MusicService : BaseService(),
   ) {
     checkMainThread()
     Timber.v("updatePlayHistory, song: ${song?.title}")
-    val songId = song?.takeIf { it.isLocal() }?.id ?: return
+    val s = song ?: return
+    if (!s.valid()) return
     launch {
-      historyRepository.update(songId, checkDuplicate)
+      historyRepository.update(s, checkDuplicate)
     }
   }
 
@@ -1241,10 +1242,6 @@ class MusicService : BaseService(),
           }
         }
       }
-      // 桌面歌词
-      Command.TOGGLE_DESKTOP_LYRIC -> {
-        lyricManager.setDesktopLyricEnabled(!lyricManager.isDesktopLyricEnabled)
-      }
       // 临时播放一首歌曲
       Command.PLAY_TEMP -> {
         intent.getSerializableExtra(EXTRA_SONG)?.let {
@@ -1268,6 +1265,14 @@ class MusicService : BaseService(),
       // 解锁桌面歌词
       Command.UNLOCK_DESKTOP_LYRIC -> {
         lyricManager.isDesktopLyricLocked = false
+      }
+      // 锁定时收到"切换桌面歌词"一律按解锁处理，避免误关
+      Command.TOGGLE_DESKTOP_LYRIC -> {
+        if (lyricManager.isDesktopLyricLocked) {
+          lyricManager.isDesktopLyricLocked = false
+        } else {
+          lyricManager.setDesktopLyricEnabled(!lyricManager.isDesktopLyricEnabled)
+        }
       }
       // 某一首歌曲添加至下一首播放
       Command.ADD_TO_NEXT_SONG -> {

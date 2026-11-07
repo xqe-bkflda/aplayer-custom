@@ -12,6 +12,7 @@
   <string name="tab_smb">SMB</string>
 
   <string name="drawer_song">Song Library</string>
+  <string name="drawer_online_music">在线音乐</string>
   <string name="drawer_recently_add">Recently Added</string>
   <string name="drawer_folder">Folder</string>
   <string name="drawer_setting">Settings</string>
@@ -31,7 +32,7 @@
   <string name="back">Back</string>
   <string name="about_feedback_title">Opinions and feedback</string>
   <string name="about_github_title">GitHub</string>
-  <string name="about_github_subtitle">View source code</string>
+  <string name="about_github_subtitle">View original project</string>
   <string name="about_release_title">Release history</string>
   <string name="about_release_subtitle">Browse all published versions</string>
   <string name="about_feedback_subtitle">Report bugs and suggestions</string>
@@ -129,7 +130,6 @@
   <string name="mylove_cant_edit">My favorites is not editable</string>
   <string name="error">Error</string>
   <string name="share_to">Share to</string>
-  <string name="qq">QQ</string>
   <string name="weibo">Weibo</string>
   <string name="wechat">Wechat</string>
   <string name="circlefriend">Moments</string>
@@ -161,7 +161,7 @@
   <string name="ui_font_size">Interface font size</string>
   <string name="ui_font_size_preview">Preview text</string>
   <string name="lrc">Lyrics</string>
-  <string name="setting_lyric_desc">Desktop, status bar and lyric source</string>
+  <string name="setting_lyric_desc">Desktop and lyric source</string>
   <string name="music_filter">Filter</string>
   <string name="lrc_scan">Lyrics scan path</string>
   <string name="lockscreen_show">Lock-Screen settings</string>
@@ -194,9 +194,9 @@
   <string name="about_info">About</string>
   <string name="check_update">Check for updates</string>
   <string name="clear_cache">Clear cache</string>
-  <string name="support_develop">Support development</string>
+  <string name="support_develop">Support original author</string>
   <string name="choose">Choose</string>
-  <string name="donate_tip">Your support is the driving force for our progress.</string>
+  <string name="donate_tip">Go support the original author of APlayer</string>
   <string name="jump_alipay_account">Direct to Alipay</string>
   <string name="already_copy">It has been copied to clipboard</string>
   <string name="confirm_delete_playlist">Confirm to remove the selected playlist?</string>
@@ -222,6 +222,7 @@
   <string name="no_lrc">No lyrics</string>
   <string name="local_list">Playlist</string>
   <string name="next_song">Next song: %s</string>
+  <string name="no_next_song">No next song</string>
   <string name="please_wait">Please wait</string>
   <string name="processing_picture">Processing the image</string>
   <string name="clear_success">Clear success</string>
@@ -597,4 +598,11 @@
 
   <string name="play_from_this_line">Play from this line</string>
   <string name="title_dynamic_smb">SMB Client</string>
+  <string name="create_time_desc">Create time desc</string>
+  <string name="tab_netease">NetEase</string>
+  <string name="download">Download</string>
+  <string name="setting_download_desc">Download settings for online music</string>
+  <string name="tab_history">History</string>
+  <string name="tab_online">Online</string>
+<string name="recognize_song">Recognize</string>
 </resources>

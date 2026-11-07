@@ -30,18 +30,23 @@ fun PlayingScreenBottomLogic() {
     dialogState = state,
     titleRes = R.string.show_on_bottom,
     itemRes = listOf(
-      R.string.show_next_song_only,
       R.string.show_vol_control_only,
-      R.string.tap_to_toggle,
       R.string.close
     ),
     positiveRes = null,
     negativeRes = null,
-    itemsCallbackSingleChoice = ItemsCallbackSingleChoice(bottom) {
-      if (bottom == it) {
-        return@ItemsCallbackSingleChoice
+    itemsCallbackSingleChoice = ItemsCallbackSingleChoice(
+      if (bottom == remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NONE) 1 else 0
+    ) {
+      if (it == 1) {
+        if (bottom != remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NONE) {
+          settingVM.setPlayingScreenBottom(remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NONE)
+        }
+      } else {
+        if (bottom == remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NONE) {
+          settingVM.setPlayingScreenBottom(remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_BOTH)
+        }
       }
-      settingVM.setPlayingScreenBottom(it)
     }
   )
 }

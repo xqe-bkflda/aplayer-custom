@@ -16,6 +16,8 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+  <!-- 听歌识曲录音 -->
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
   <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false"/>
 
@@ -68,6 +70,12 @@
         <data android:mimeType="application/x-ogg"/>
         <data android:mimeType="application/itunes"/>
       </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:scheme="aplayer"/>
+      </intent-filter>
+
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
 

@@ -12,6 +12,7 @@ object PrefKeys {
 
     /** 第一次读取数据 */
     const val FIRST_LOAD = "first_load"
+    const val FIRST_RUN_ABOUT_SHOWN = "first_run_about_shown"
 
     /** 是否开启屏幕常亮 */
     const val SCREEN_ALWAYS_ON = "key_screen_always_on"
@@ -24,6 +25,7 @@ object PrefKeys {
 
     /** 曲库配置 */
     const val LIBRARY = "library_category"
+    const val LIBRARY_VERSION = "library_category_version"
 
     /** 锁屏设置 */
     const val LOCKSCREEN = "lockScreen"
@@ -216,6 +218,7 @@ object PrefKeys {
 
   object Theme : Keys() {
     const val NAME = "aplayer-theme"
+    const val THEME_VERSION = "theme_config_version"
     const val PRIMARY_COLOR = "primary_color"
     const val SECONDARY_COLOR = "accent_color"
     const val DARK_THEME = "dark_theme"

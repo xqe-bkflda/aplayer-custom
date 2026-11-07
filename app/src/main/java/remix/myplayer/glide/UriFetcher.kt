@@ -76,13 +76,20 @@ class UriFetcher @Inject constructor(
   }
 
   fun fetch(model: Any): Uri {
-    val uri = when (model) {
-      is Song -> fetch(model)
-      is Album -> fetch(model)
-      is Artist -> fetch(model)
-      is PlayList -> fetch(model)
-      is Genre -> fetch(model)
-      else -> throw IllegalArgumentException("unknown model: ${model::class.java.simpleName}")
+    val uri = runCatching {
+      when (model) {
+        is Song -> fetch(model)
+        is Album -> fetch(model)
+        is Artist -> fetch(model)
+        is PlayList -> fetch(model)
+        is Genre -> fetch(model)
+        else -> throw IllegalArgumentException("unknown model: ${model::class.java.simpleName}")
+      }
+    }.getOrElse {
+      // 在线歌曲的地址常是临时直链，解析封面时可能超时/403/解码失败，
+      // 这些都不该让 App 崩，退化成占位图即可。
+      Timber.w(it, "fetch cover uri failed for ${model::class.java.simpleName}")
+      Uri.EMPTY
     }
 
     if (uri != Uri.EMPTY) {
@@ -117,9 +124,12 @@ class UriFetcher @Inject constructor(
   private fun fetch(song: Song): Uri {
     checkWorkerThread()
     if (song is Song.Remote) {
-      runBlocking {
-        fetchMetaDataUseCase(song)
-      }
+      // 远程歌曲（在线音乐 / 最近播放里的在线歌）没有本地封面，
+      // 这里会去解析元数据。网络不稳、地址失效、URL 异常都会抛，
+      // runBlocking 里抛出就是直接崩 —— 表现为"一滑到在线列表就闪退"。
+      runCatching {
+        runBlocking { fetchMetaDataUseCase(song) }
+      }.onFailure { Timber.w(it, "fetchMetaData for remote song failed") }
     }
     if (song.isLocal()) { // 仅本地歌曲
       if (song.albumId <= 0 || song.id <= 0) {
@@ -137,7 +147,8 @@ class UriFetcher @Inject constructor(
         if (songs.isNotEmpty()) {
           return (PREFIX_EMBEDDED + songs[0].data).toUri()
         }
-      } else if (isAlbumThumbExistInMediaCache(song.artUri)) {
+      } else if (song.albumId > 0 && isAlbumThumbExistInMediaCache(song.artUri)) {
+        // 远程歌没有本地 albumId，拼出来的 albumart uri 是无效的，必须跳过
         return song.artUri
       }
     }

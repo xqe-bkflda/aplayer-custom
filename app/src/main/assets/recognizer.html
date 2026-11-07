@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>fingerprint</title>
+</head>
+<body>
+<script src="afp_wasm_b64.js"></script>
+<script src="sandbox.bundle.js"></script>
+<script>
+    // Android 侧通过 evaluateJavascript 调 __encode(pcmBase64)，拿指纹。
+    // 结果用两种方式回传：直接返回值 + AndroidBridge 回调（返回值更简单，
+    // 但 evaluateJavascript 拿不到 Promise，所以再走一次回调兜底）。
+    window.__ready = false;
+
+    function notify(kind, payload) {
+        try {
+            if (window.AndroidBridge && window.AndroidBridge.onResult) {
+                window.AndroidBridge.onResult(kind, payload);
+            }
+        } catch (e) {
+            // 忽略：Activity 销毁后回调会失败
+        }
+    }
+
+    window.__encode = function (pcmBase64) {
+        try {
+            window.__NCM__.encodePcm8kB64(pcmBase64).then(function (fp) {
+                notify('ok', fp);
+            }).catch(function (e) {
+                notify('error', String((e && e.message) || e));
+            });
+        } catch (e) {
+            notify('error', String((e && e.message) || e));
+        }
+    };
+
+    // 引擎需要异步把 wasm 编译进内存，等 ExportFP 就绪再通知原生
+    (function poll() {
+        var fn = null;
+        try {
+            fn = processor.start();
+        } catch (e) {
+            // 还没编译好
+        }
+        if (fn && typeof fn.ExtractQueryFP === 'function') {
+            window.__ready = true;
+            notify('ready', '1');
+            return;
+        }
+        setTimeout(poll, 120);
+    })();
+</script>
+</body>
+</html>

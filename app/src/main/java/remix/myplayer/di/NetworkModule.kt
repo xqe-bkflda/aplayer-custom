@@ -12,11 +12,11 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import remix.myplayer.request.kugou.KuGouClient
+import remix.myplayer.data.prefs.NetEasePrefs
 import remix.myplayer.request.netease.NetEaseClient
 import remix.myplayer.request.network.GithubApi
 import remix.myplayer.request.network.LastFMApi
 import remix.myplayer.request.network.OkHttpHelper
-import remix.myplayer.request.qq.QQClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -47,6 +47,12 @@ object NetworkModule {
 
   @Provides
   @Singleton
+  fun provideNetEasePrefs(@ApplicationContext context: Context): NetEasePrefs {
+    return NetEasePrefs(context)
+  }
+
+  @Provides
+  @Singleton
   fun provideNetEaseEapiClient(
     @ApplicationContext context: Context,
     okHttpClient: OkHttpClient
@@ -61,15 +67,6 @@ object NetworkModule {
     okHttpClient: OkHttpClient
   ): KuGouClient {
     return KuGouClient(okHttpClient)
-  }
-
-  @Provides
-  @Singleton
-  fun provideQQClient(
-    @ApplicationContext context: Context,
-    okHttpClient: OkHttpClient
-  ): QQClient {
-    return QQClient(context, okHttpClient)
   }
 
   @Provides

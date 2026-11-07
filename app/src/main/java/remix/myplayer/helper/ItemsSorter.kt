@@ -129,6 +129,7 @@ object ItemsSorter {
     val collator = Collator.getInstance()
     return when (sortOrder) {
       SortOrder.PLAYLIST_DATE -> playLists
+      SortOrder.PLAYLIST_DATE_DESC -> playLists.sortedByDescending { it.date }
       else -> {
         playLists.sortedWith(Comparator { o1: PlayList, o2: PlayList ->
           when (sortOrder) {

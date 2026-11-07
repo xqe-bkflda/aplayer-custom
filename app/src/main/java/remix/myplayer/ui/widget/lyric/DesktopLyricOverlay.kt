@@ -95,7 +95,7 @@ fun DesktopLyricOverlay(
 
   var sungColor by remember {
     val savedColor = desktopLyricPrefs.sungColor
-    mutableStateOf(if (savedColor != 0) Color(savedColor) else themeController.appTheme.primary)
+    mutableStateOf(if (savedColor != 0) Color(savedColor) else Color.White)
   }
 
   val unSungColor = Color(desktopLyricPrefs.unSungColor)
@@ -131,9 +131,14 @@ fun DesktopLyricOverlay(
           }
         )
       }
-      .clickableWithoutRipple(enabled = !uiState.locked) {
-        showPanel = !showPanel
-        markInteraction()
+      .clickableWithoutRipple(enabled = true) {
+        // 锁定状态下：点一下即解锁，之后就能拖动了（否则用户卡在"划不动"）
+        if (uiState.locked) {
+          onLock()
+        } else {
+          showPanel = !showPanel
+          markInteraction()
+        }
       }
   ) {
     // 关闭按钮
@@ -296,7 +301,10 @@ private fun DesktopLyricLines(
     position = progressState.position,
     duration = progressState.duration,
     isPlaying = playbackState.isPlaying,
-    speed = playbackState.speed
+    speed = playbackState.speed,
+    // 桌面歌词窗口是独立 overlay，逐帧刷新抖动明显、耗电高；
+    // 每 32ms（约 30fps）更新一次足够顺滑，又能明显减少卡顿感。
+    intervalMs = 32L
   )
 
   val currentLyric = uiState.currentLyricLine

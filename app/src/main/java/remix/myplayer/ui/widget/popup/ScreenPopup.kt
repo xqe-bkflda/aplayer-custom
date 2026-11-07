@@ -55,21 +55,28 @@ fun ScreenPopupButton(library: Library?, vm: LibraryViewModel = libraryViewModel
     )
   }
 
+  // 只处理支持排序的标签页，其它（远程/网易云/最近播放）直接不显示排序按钮
+  val sortableTags = listOf(
+    Library.TAG_SONG, Library.TAG_ALBUM, Library.TAG_ARTIST,
+    Library.TAG_GENRE, Library.TAG_PLAYLIST, Library.TAG_FOLDER
+  )
+  val sortable = library.tag in sortableTags
+
+  val onlineVM = remix.myplayer.viewmodel.onlineMusicViewModel
+  val nav = remix.myplayer.ui.nav.LocalNavController.current
+
   val sortOrderItems = library.menuItems
   val sortOrders = library.sortOrders
-  val sortOrder = when (library.tag) {
+  val sortOrder = if (sortable) when (library.tag) {
     Library.TAG_SONG -> settingState.library.songSortOrder
     Library.TAG_ALBUM -> settingState.library.albumSortOrder
     Library.TAG_ARTIST -> settingState.library.artistSortOrder
     Library.TAG_PLAYLIST -> settingState.library.playlistSortOrder
     Library.TAG_GENRE -> settingState.library.genreSortOrder
     Library.TAG_FOLDER -> settingState.library.folderSortOrder
-    else -> throw RuntimeException("unknown tag: ${library.tag}")
-  }
+    else -> ""
+  } else ""
   val selectedIndex = sortOrders.indexOf(sortOrder)
-  if (selectedIndex < 0) {
-    throw IllegalArgumentException("sortOrder:$sortOrder sortOrders: $sortOrders")
-  }
 
   DropdownMenu(
     modifier = Modifier.wrapContentSize(),
@@ -110,7 +117,7 @@ fun ScreenPopupButton(library: Library?, vm: LibraryViewModel = libraryViewModel
       vm.fetchMedia()
     }
 
-    sortOrderItems.forEachIndexed { index, res ->
+    if (sortable) sortOrderItems.forEachIndexed { index, res ->
       DropdownMenuItem(
         text = {
           Row(

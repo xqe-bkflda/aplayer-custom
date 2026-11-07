@@ -42,3 +42,25 @@ data class NetEaseArtist(
   val name: String?,
   val picUrl: String?
 )
+@Serializable
+data class NetEasePlaylistDetail(
+  val id: Long,
+  val name: String?,
+  val coverUrl: String?,
+  val trackCount: Int,
+  val tracks: List<NetEaseSong> = emptyList(),
+  /** 5 = 「我喜欢的音乐」歌单（网易云约定的 specialType） */
+  val specialType: Int = 0
+)
+
+@Serializable
+data class NetEaseComment(
+  val commentId: Long = 0L,
+  val userName: String = "",
+  val avatar: String = "",
+  val content: String = "",
+  val likedCount: Int = 0,
+  val time: Long = 0L,
+  val isHot: Boolean = false,
+  val replyTo: String = ""
+)

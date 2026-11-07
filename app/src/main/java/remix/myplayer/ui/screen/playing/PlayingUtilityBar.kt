@@ -48,10 +48,7 @@ import androidx.palette.graphics.Palette
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 import remix.myplayer.R
-import remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_BOTH
-import remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NEXT
 import remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_NONE
-import remix.myplayer.data.prefs.SettingPrefs.Companion.BOTTOM_SHOW_VOLUME
 import remix.myplayer.service.playback.PlaybackUiState
 import remix.myplayer.ui.theme.LocalTheme
 import remix.myplayer.ui.widget.common.LineSlider
@@ -75,72 +72,29 @@ internal fun PlayingUtilityBar(
     val swatchColor = Color(swatch.rgb)
     assert(playingScreenBottom != BOTTOM_SHOW_NONE)
 
-    var nextSongIsVisible by remember(playingScreenBottom) {
-      mutableStateOf(playingScreenBottom == BOTTOM_SHOW_NEXT)
-    }
-    var volumeIsVisible by remember(playingScreenBottom) {
-      mutableStateOf(playingScreenBottom != BOTTOM_SHOW_NEXT)
+    // 底部栏现在只有音量条这一个功能；走到这里说明用户开了底部栏，
+    // 因此初始必定显示音量（旧配置里存的 BOTTOM_SHOW_NEXT=0 也当显示处理）。
+    var volumeIsVisible by remember {
+      mutableStateOf(true)
     }
 
     var refreshKey by remember(playingScreenBottom) {
       mutableIntStateOf(0)
     }
 
-    AnimatedVisibility(nextSongIsVisible, enter = fadeIn(), exit = fadeOut()) {
-      NextSong(musicState, swatchColor) {
-        if (playingScreenBottom != BOTTOM_SHOW_NEXT) {
-          nextSongIsVisible = false
-          volumeIsVisible = true
-          refreshKey++
-        }
-      }
-    }
     AnimatedVisibility(volumeIsVisible, enter = fadeIn(), exit = fadeOut()) {
       VolumeSeekbar(swatchColor) {
-        if (playingScreenBottom != BOTTOM_SHOW_VOLUME) {
-          refreshKey++
-        }
+        refreshKey++
       }
     }
 
     LaunchedEffect(refreshKey, playingScreenBottom) {
-      if (refreshKey == 0 && playingScreenBottom == BOTTOM_SHOW_BOTH || refreshKey > 0) {
-        // nextSong -> GONE
-        // volume -> VISIBLE
+      // 「点击切换」模式下，3 秒没操作就收起音量条
+      if (refreshKey > 0) {
         delay(3000)
-        nextSongIsVisible = true
         volumeIsVisible = false
       }
     }
-  }
-}
-
-@Composable
-private fun NextSong(musicState: PlaybackUiState, swatchColor: Color, onClick: (() -> Unit)? = null) {
-  CenterInBox(
-    modifier = Modifier
-      .padding(horizontal = 36.dp)
-      .fillMaxWidth()
-      .background(swatchColor.copy(0.1f), shape = RoundedCornerShape(2.dp))
-      .clickableWithoutRipple {
-        onClick?.invoke()
-      }
-  ) {
-    Text(
-      text = stringResource(R.string.next_song, musicState.nextSong.title),
-      color = Color(
-        if (LocalTheme.current.isLight) {
-          "#a8a8a8"
-        } else {
-          "#e5e5e5"
-        }.toColorInt()
-      ),
-      fontSize = 14.sp,
-      textAlign = TextAlign.Center,
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis,
-      modifier = Modifier.padding(vertical = 8.dp)
-    )
   }
 }
 

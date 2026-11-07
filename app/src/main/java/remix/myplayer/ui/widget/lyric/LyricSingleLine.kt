@@ -1,6 +1,7 @@
 package remix.myplayer.ui.widget.lyric
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -46,27 +47,45 @@ fun LyricSingleLine(
   )
   val isPerWord = line is PerWordLyricLine
 
+  // 文本测量很贵（尤其在 drawBehind 里每帧重算会明显卡顿）。
+  // 把两个颜色的测量提到 remember，只在 content/字号/颜色变化时才重算。
+  // 普通歌词行整行歌词一次多行较少见，PerWord 行也只在换行时变。
+  val measured = remember(content, baseStyle, unSungColor, sungColor, textMeasurer) {
+    val unsung = textMeasurer.measure(
+      text = content,
+      style = baseStyle.copy(color = unSungColor),
+      maxLines = 1,
+      softWrap = false,
+      overflow = TextOverflow.Ellipsis
+    )
+    val sung = textMeasurer.measure(
+      text = content,
+      style = baseStyle.copy(color = sungColor),
+      maxLines = 1,
+      softWrap = false,
+      overflow = TextOverflow.Ellipsis
+    )
+    unsung to sung
+  }
+
+  // 布局尺寸测量；Layout 的 measure block 只在测量阶段调用，这里也缓存
+  val layoutResultRemember = remember(content, baseStyle, textMeasurer) {
+    textMeasurer.measure(
+      text = content,
+      style = baseStyle,
+      maxLines = 1,
+      softWrap = false,
+      overflow = TextOverflow.Ellipsis
+    )
+  }
+
   Layout(
     modifier = Modifier.drawBehind {
       if (content.isEmpty()) return@drawBehind
 
+      val (layoutUnsung, layoutSung) = measured
       // 外层整体裁剪，防止越界到父容器
       clipRect(left = 0f, top = 0f, right = size.width, bottom = size.height) {
-
-        val layoutUnsung = textMeasurer.measure(
-          text = content,
-          style = baseStyle.copy(color = unSungColor),
-          maxLines = 1,
-          softWrap = false,
-          overflow = TextOverflow.Ellipsis
-        )
-        val layoutSung = textMeasurer.measure(
-          text = content,
-          style = baseStyle.copy(color = sungColor),
-          maxLines = 1,
-          softWrap = false,
-          overflow = TextOverflow.Ellipsis
-        )
 
         val textWidth = layoutUnsung.size.width.toFloat()
         val textHeight = layoutUnsung.size.height.toFloat()
@@ -121,15 +140,8 @@ fun LyricSingleLine(
       }
     }
   ) { _, constraints ->
-    // 仅测量不绘制
-    val layoutResult = textMeasurer.measure(
-      text = content,
-      style = baseStyle,
-      maxLines = 1,
-      softWrap = false,
-      overflow = TextOverflow.Ellipsis
-    )
-
+    // 仅测量不绘制，用 remember 缓存的测量结果，避免每帧重测
+    val layoutResult = layoutResultRemember
     val width = layoutResult.size.width.coerceIn(constraints.minWidth, constraints.maxWidth)
     val height = layoutResult.size.height.coerceIn(constraints.minHeight, constraints.maxHeight)
 

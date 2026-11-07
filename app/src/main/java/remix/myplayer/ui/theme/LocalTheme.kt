@@ -16,8 +16,8 @@ import remix.myplayer.util.ColorUtil
 
 val LocalTheme = compositionLocalOf<AppTheme> {
   return@compositionLocalOf AppTheme(
-    primary = Color(0xff698cf6),
-    secondary = Color(0xff698cf6),
+    primary = Color(0xff8F6E00),
+    secondary = Color(0xff8F6E00),
     theme = LIGHT
   )
 }
