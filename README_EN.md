@@ -1,134 +1,63 @@
 # aplayer-custom
 
-> An APlayer that can actually play NetEase Cloud Music.
+> An APlayer build that can actually play NetEase Cloud Music.
 
-A personal fork of [rRemix/APlayer](https://github.com/rRemix/APlayer) 2.1.2.1.
-The original is a lovely local music player, but it only handles local files and WebDAV.
-This fork wires in online music and fixes a pile of issues around the playing screen and lyrics.
+A personal fork of [rRemix/APlayer](https://github.com/rRemix/APlayer) 2.1.2.1. The upstream project is a great local player with WebDAV support — this branch adds online music and fixes a pile of playback-page and lyrics bugs.
 
-**Current version: `v2.1.2.1-custom`** · [Download APK](https://github.com/xqe-bkflda/aplayer-custom/releases/latest)
+**Current version: `v2.1.2.1-custom`** · [Download the APK](https://github.com/xqe-bkflda/aplayer-custom/releases/latest)
 
-[中文说明](README.md)
-
----
-
-## What's different
+## What changed
 
 ### Online music
 
 | Feature | Notes |
 |:-|:-|
-| NetEase Cloud Music | Search (songs / playlists / suggestions), playlists, charts, personal radar, URL resolving, tag writing on download, lyrics |
+| NetEase Cloud Music, end to end | search (track / playlist / suggestions), playlists, leaderboards, daily radar, URL resolution, download with tags, lyrics |
 | Three login methods | SMS code, phone + password, QR code |
-| KuGou source | Search + stream fetching, as a fallback when NetEase lacks the rights |
-| Favorite count | Real like count under the heart button on the playing screen |
-| Comments | Bottom sheet with paginated loading |
-| Batch download | Long-press on the library "songs" tab or a playlist detail to enter multi-select |
+| Kugou source | search and streaming, used when NetEase has no licence for a track |
+| Real collect counts | the red heart on the playback page shows the actual number of saves |
+| Comments | in-app comment sheet with paging |
+| Batch download | long-press on the "songs" tab or a playlist to multi-select and download a whole page |
 
 ### Song recognition
 
-Play a song out loud and identify it, then push it straight into the online library.
+Play a track out loud and the app identifies it and adds it straight to the online library.
 
-- Extracts an audio fingerprint with `afp.wasm`, calls NetEase `audio/match`
-- Records 12 seconds, returns up to 3 candidates
-- Launcher long-press shortcut goes straight there
+- Acoustic fingerprinting via `afp.wasm`, matched against NetEase's `audio/match` endpoint
+- Records for 12 seconds, returns up to 3 candidates
+- Desktop shortcut jumps straight in
 
 ### Playback and lyrics
 
-- Tapping a song queues the **rest of the list in its original order**, with a "next up" hint at the bottom of the queue
-- Desktop lyrics are throttled and text measurement is cached — no more stutter while it sits on screen
-- Lyric source order: local → NetEase → KuGou → embedded → ignore, all configurable
-- Fixed the intermittent "no lyrics" that never refreshed
+- The queue is rebuilt in the playlist's original order, and the bottom of the queue shows a **Next** hint
+- Desktop lyrics are throttled and text measurement is cached, so they no longer stutter after a long run
+- Lyric search order: local → NetEase → Kugou → embedded → give up; you can change it
+- Fixed the occasional "no lyrics yet" that never refreshed
 
 ### Settings and details
 
-- Manual scan and download directory both use the system folder picker (SAF)
-- Un-favoriting can delete the downloaded file automatically (on by default)
-- About screen rebuilt: version, changelog, privacy, API provenance, disclaimer
-- Removed update check, feedback, and the dead QQ Music entry points
-- Database bumped to v9 — the play queue remembers the NetEase song id
+- Manual scan and download folder both use the system folder picker (SAF)
+- Removing a collect can also delete the downloaded file (on by default)
+- About page redone: version, change list, privacy notes, API sources, disclaimer
+- Removed check-for-updates, feedback link and the dead QQ Music entries
+- Database bumped to v9; the queue now remembers NetEase IDs
 
----
-
-## Screenshots
+### Screenshots
 
 | | | | |
 |:-:|:-:|:-:|:-:|
 | <img src="screenshoots/1-home.png" width="180" /> | <img src="screenshoots/3-playing-cover.png" width="180" /> | <img src="screenshoots/4-playing-lyric.png" width="180" /> | <img src="screenshoots/5-dark.png" width="180" /> |
 | Home | Playing (cover) | Playing (lyrics) | Dark |
 
-| | | |
-|:-:|:-:|:-:|
+| | | | |
+|:-:|:-:|:-:|:-:|
 | <img src="screenshoots/6-sleep-timer.png" width="180" /> | <img src="screenshoots/7-desktop-lyric-widget.png" width="180" /> | <img src="screenshoots/8-lockscreen.png" width="180" /> |
-| Sleep timer | Desktop lyrics | Lockscreen |
-
----
-
-## Install
-
-Grab `1-APlayer-*-normal-release.apk` from [Releases](https://github.com/xqe-bkflda/aplayer-custom/releases).
-
-- Requires **Android 5.0+** (minSdk 21)
-- Upgrading in place migrates the database automatically; if the signature differs, uninstall first
-  (that only clears the local library cache, your music files are untouched)
-- A one-time notice on first launch explains what changed and where data goes
+| Sleep timer | Desktop lyric widget | Lock screen |
 
 ## Build
 
-```bash
-# JDK 21 + Android SDK (compileSdk 36 / NDK 28)
-git clone https://github.com/xqe-bkflda/aplayer-custom.git
-cd aplayer-custom
-
-# submodules (taglib, media3)
-git submodule update --init --recursive
-
-./gradlew :app:assembleNormalRelease
-```
-
-Output lands in `app/build/outputs/apk/normal/release/`.
-
-> Change the signing config in `app/build.gradle.kts` before building your own release —
-> the bundled `Debug.jks` is only meant for test builds.
-
-## About the APIs
-
-Every NetEase and KuGou endpoint here was found by traffic analysis. No third-party SDK involved.
-
-The `afp.wasm` fingerprint module and the encoding approach for song recognition are based on
-[MelodyYuuka/NeteaseCloudMusic-Audio-Recognize](https://github.com/MelodyYuuka/NeteaseCloudMusic-Audio-Recognize).
-
-**Nothing is uploaded.** Login state lives in local SharedPreferences only — no analytics,
-no tracking, no crash reporting.
-
-Full details are in-app: Settings → About → Declaration.
-
-## Known limitations
-
-- Some NetEase tracks require a paid membership; when no stream resolves the app says "membership may be required"
-- KuGou support is search and streaming only — no login, playlists, or comments
-- Song recognition relies on WebAssembly in the system WebView; very old WebViews (early Android 5) may fail
-- Background recording needs the Microphone permission on recent Android versions
-
-## Credits
-
-Original author [rRemix](https://github.com/rRemix), plus:
-
-[XXPermissions](https://github.com/getActivity/XXPermissions) ·
-[Retrofit](https://github.com/square/retrofit) ·
-[OkHttp](https://github.com/square/okhttp) ·
-[Glide](https://github.com/bumptech/glide) ·
-[Timber](https://github.com/JakeWharton/timber) ·
-[LeakCanary](https://github.com/square/leakcanary) ·
-[TinyPinyin](https://github.com/promeG/TinyPinyin) ·
-[TagLib for Android](https://github.com/rRemix/taglib) ·
-[ZXing](https://github.com/zxing/zxing) ·
-[media3](https://github.com/androidx/media)
+Open in Android Studio (Kotlin + Jetpack Compose) and build an APK. The NetEase and Kugou endpoints are private APIs and may change without notice — see [Privacy.md](Privacy.md) and [FAQs.md](FAQs.md).
 
 ## License
 
-[GPL-3.0](LICENSE), same as upstream. Fork it, change it — just keep it open.
-
----
-
-<sub>A personal fork. Not affiliated with NetEase Cloud Music or KuGou.</sub>
+GPL-3.0 — see [LICENSE](LICENSE). Upstream APlayer is MIT; this fork adds GPL-licensed components, so the fork as a whole is GPL-3.0.
