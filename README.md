@@ -1,3 +1,14 @@
+<div align="center">
+  <img src="assets/banner.png" alt="aplayer-custom" width="100%">
+</div>
+
+<p align="center">
+[![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+  [![License](https://img.shields.io/badge/license-GPL--3.0-3DDC84?style=flat-square)](LICENSE)
+  [![Stars](https://img.shields.io/github/stars/xqe-bkflda/aplayer-custom?style=flat-square&color=8FA5BA)](https://github.com/xqe-bkflda/aplayer-custom/stargazers)
+  [![Release](https://img.shields.io/badge/release-v2.1.2.1--custom-2A3B52?style=flat-square)](https://github.com/xqe-bkflda/aplayer-custom/releases/latest)
+</p>
+
 # aplayer 二改版
 
 > 一个能听网易云的 APlayer。
