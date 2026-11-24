@@ -2,6 +2,10 @@
   <img src="assets/banner.png" alt="aplayer-custom" width="100%">
 </div>
 
+<p align="right">
+  <a href="README_EN.md">English</a> · <b>中文</b>
+</p>
+
 <p align="center">
 [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
   [![License](https://img.shields.io/badge/license-GPL--3.0-3DDC84?style=flat-square)](LICENSE)
